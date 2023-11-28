@@ -2,6 +2,12 @@
 import Levenshtein
 
 def similar_score_str(str1, str2):
+
+    """
+    compare 2 strings based on Levenshtein distance
+    """
+
+
     # Calculate Levenshtein distance
     distance = Levenshtein.distance(str1, str2)
 
@@ -11,13 +17,23 @@ def similar_score_str(str1, str2):
     return similarity
 
 def total_similarity(row1, row2):
+
+    """
+    averaged similarity based on 3 attributes
+    """
+
     #authors_sim = similar_score_str(row1["Authors"], row2["Authors"])
     title_sim = similar_score_str(row1["Title"], row2["Title"])
     venue_sim = similar_score_str(row1["Venue"], row2["Venue"])
     year_sim = row1["Year"] == row2["Year"]
     return ( title_sim + venue_sim + year_sim)/3
 
-def exact_match(row1, row2):
+def exact_match(row1, row2): # not used
+
+    """
+    exact match of attributes
+    """
+
     #authors_sim = row1["Authors"] == row2["Authors"]
     title_sim = row1["Title"] == row2["Title"]
     venue_sim = row1["Venue"] == row2["Venue"]
