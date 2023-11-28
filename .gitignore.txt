@@ -1,0 +1,7 @@
+# Ignore text and CSV files
+*.txt
+*.csv
+
+# Ignore folders
+.ipynb_checkpoints/
+.vs/
