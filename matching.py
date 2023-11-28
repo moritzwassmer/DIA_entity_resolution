@@ -54,11 +54,10 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
     """
 
     matched_ids = list()
+    unmatched_ids = list()
     
     unique_buckets = set(df1["bucket"]).union(set(df2["bucket"]))
-    
-    iterations = 0
-    
+
     for bucket in tqdm(unique_buckets):
 
         df1_bucket = df1[df1['bucket'] == bucket].reset_index()
@@ -71,10 +70,10 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
 
             if similarity_function(row1, row2) >= threshold: # Hardcoded threshold
                 matched_ids += [(row1["Index"], row2["Index"])]
-                
-            iterations += 1
+            else:
+                unmatched_ids += [(row1["Index"], row2["Index"])]
                      
-    return matched_ids, iterations #+ list(unmatched)
+    return matched_ids, unmatched_ids #+ list(unmatched)
 
 def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
 
@@ -87,6 +86,7 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
 
     combinations = list(product(list(df1.index),list(df2.index)))
     matched_ids = list()
+    unmatched_ids = list()
     iterations = 0
     
     for ix1, ix2 in tqdm(combinations): # each combination
@@ -96,7 +96,7 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
 
         if similarity_function(row1, row2) >= threshold: # Hardcoded threshold
             matched_ids += [(row1["Index"], row2["Index"])]
-        
-        iterations += 1
+        else:
+            unmatched_ids += [(row1["Index"], row2["Index"])]
 
-    return matched_ids, iterations #+ list(unmatched)
+    return matched_ids, unmatched_ids #= list() #+ list(unmatched)
