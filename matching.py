@@ -46,6 +46,7 @@ def exact_match(row1:pd.Series, row2:pd.Series): # not used
 
 # TODO Write in SQL like commands, hardcoded
 # TODO probably wrong. i need to guarantee that row is only added to unmatched if there couldnt be found a match at all
+# TODO return dataframes with full rows instead of only ids
 
 def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
     
