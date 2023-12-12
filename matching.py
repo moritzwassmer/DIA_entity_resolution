@@ -44,10 +44,14 @@ def exact_match(row1:pd.Series, row2:pd.Series): # not used
     return title_sim & venue_sim & year_sim
 
 
-def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
+# TODO Write in SQL like commands, hardcoded
+# TODO probably wrong. i need to guarantee that row is only added to unmatched if there couldnt be found a match at all
 
+def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
+    
     """
     matches the rows by using the similarity funciton. 
+    similarity function takes 2 pandas rows row1:pd.Series, row2:pd.Series
 
     Return:
         List of tuples of indices [(a,b), (a,c)]
@@ -68,7 +72,7 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
             row1 = df1_bucket.iloc[ix1]
             row2 = df2_bucket.iloc[ix2]
 
-            if similarity_function(row1, row2) >= threshold: # Hardcoded threshold
+            if similarity_function(row1, row2) >= threshold: 
                 matched_ids += [(row1["Index"], row2["Index"])]
             else:
                 unmatched_ids += [(row1["Index"], row2["Index"])]
@@ -76,7 +80,6 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
     return matched_ids, unmatched_ids #+ list(unmatched)
 
 def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
-
     """
     matches the rows by using the similarity funciton without using the bucket column in the dataframe 
 
@@ -87,14 +90,13 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
     combinations = list(product(list(df1.index),list(df2.index)))
     matched_ids = list()
     unmatched_ids = list()
-    iterations = 0
     
     for ix1, ix2 in tqdm(combinations): # each combination
 
         row1 = df1.iloc[ix1]
         row2 = df2.iloc[ix2]
 
-        if similarity_function(row1, row2) >= threshold: # Hardcoded threshold
+        if similarity_function(row1, row2) >= threshold: # TODO see todo above
             matched_ids += [(row1["Index"], row2["Index"])]
         else:
             unmatched_ids += [(row1["Index"], row2["Index"])]

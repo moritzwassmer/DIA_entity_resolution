@@ -19,6 +19,12 @@ def cast_df(df:pd.DataFrame):
     df['Index'] = df['Index'].astype('string')
     df['Title'] = df['Title'].astype('string')
     df['Authors'] = df['Authors'].astype('string')
+
+    # strings to lower
+    df['Venue'] = df['Venue'].str.lower()
+    df['Title'] = df['Title'].str.lower()
+    df['Authors'] = df['Authors'].str.lower()
+
     return df
 
 
@@ -71,14 +77,6 @@ def parse_text(lines):
     #df = df.explode('Authors').reset_index(drop=True)
 
     #  type casting
-    df['Year'] = df['Year'].astype('Int64')  # Use 'Int64' to allow for NaN values in integer column
-    df['Venue'] = df['Venue'].astype('string')
-    df['Index'] = df['Index'].astype('string')
-    df['Title'] = df['Title'].astype('string')
-    
-    # strings to lower
-    df['Venue'] = df['Venue'].str.lower()
-    df['Title'] = df['Title'].str.lower()
-    df['Authors'] = df['Authors'].str.lower()
+    df = cast_df(df)
 
     return df
