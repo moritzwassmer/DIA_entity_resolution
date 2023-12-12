@@ -4,6 +4,8 @@ import pandas as pd
 from tqdm import tqdm
 from itertools import combinations, product
 
+from clustering import get_unique_strings
+
 def similar_score_str(str1:str, str2:str):
 
     """
@@ -77,8 +79,20 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
                 matched_ids += [(row1["Index"], row2["Index"])]
             else:
                 unmatched_ids += [(row1["Index"], row2["Index"])]
+
+    unmatched_ids = get_unmatched(matched_ids, unmatched_ids) # TODO not clean
                      
     return matched_ids, unmatched_ids #+ list(unmatched)
+
+def get_unmatched(matched_ids, unmatched_ids):
+    unique_strings = get_unique_strings(matched_ids)
+
+    # Flatten the list of tuples
+    flat_list = set([item for sublist in unmatched_ids for item in sublist]).difference(unique_strings)
+
+    # Get unique string values using set
+    unique_strings_unmatched = list(flat_list)
+    return unique_strings_unmatched
 
 def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
     """
@@ -101,5 +115,7 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
             matched_ids += [(row1["Index"], row2["Index"])]
         else:
             unmatched_ids += [(row1["Index"], row2["Index"])]
+
+    unmatched_ids = get_unmatched(matched_ids, unmatched_ids) # TODO not clean
 
     return matched_ids, unmatched_ids #= list() #+ list(unmatched)

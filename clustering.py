@@ -41,16 +41,16 @@ def get_connected_components(bucket_matched):
     # 1) generate adjacency matrix
     adj_matrix = construct_adjacency_matrix( bucket_matched)
 
+        # Get the number of nodes
+    num_nodes = adj_matrix.shape[0]
+
     # 2) generate initial clusters (own strings)
     node_dict = {}
     for node in unique_strings:
         node_dict[node] = node
     node_dict
 
-    # Get the number of nodes
-    num_nodes = adj_matrix.shape[0]
-
-    # Function to check and update node_dict
+    # 3) Fixed point iteration
     updated = True
     while updated:
         updated = False
@@ -67,7 +67,6 @@ def get_connected_components(bucket_matched):
             if new_string > current_string:
                 node_dict[current_node] = new_string
                 updated = True
-
 
     # Print the final node_dict
     #print("Final node_dict:")
