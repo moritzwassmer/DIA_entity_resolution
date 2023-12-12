@@ -31,7 +31,7 @@ def total_similarity(row1:pd.Series, row2:pd.Series):
     title_sim = similar_score_str(row1["Title"], row2["Title"])
     venue_sim = similar_score_str(row1["Venue"], row2["Venue"])
     year_sim = row1["Year"] == row2["Year"]
-    return ( title_sim + venue_sim + year_sim)/3
+    return (title_sim + venue_sim + year_sim)/3
 
 def exact_match(row1:pd.Series, row2:pd.Series): # not used
 
@@ -46,8 +46,8 @@ def exact_match(row1:pd.Series, row2:pd.Series): # not used
     return title_sim & venue_sim & year_sim
 
 
-# TODO Write in SQL like commands, hardcoded
-# TODO probably wrong. i need to guarantee that row is only added to unmatched if there couldnt be found a match at all
+# TODO Write in SQL like commands, hardcoded 
+# SOLVED, but not tested probably wrong. i need to guarantee that row is only added to unmatched if there couldnt be found a match at all
 # TODO return dataframes with full rows instead of only ids
 
 def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):

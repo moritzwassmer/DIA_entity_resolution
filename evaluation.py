@@ -1,4 +1,4 @@
-def evaluate(truth:set[str], preds:set[str], n:set[str]): 
+def evaluate(truth:set[str], preds:set[str]): #, n:set[str]
 
     """
     takes truth and preds respectiveley, each being lists of  
@@ -14,13 +14,13 @@ def evaluate(truth:set[str], preds:set[str], n:set[str]):
     fn = len(truth - preds)
 
     # TN
-    tn =len(n) - fn # TODO check if correct
+    #tn =len(n) - fn # never used anyways
 
     # Display the results
     print("True Positives (TP):", tp)
     print("False Positives (FP):", fp)
     print("False Negatives (FN):", fn)
-    print("True Negatives (TN):", tn)
+    #print("True Negatives (TN):", tn)
     
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0
 
