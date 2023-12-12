@@ -26,6 +26,16 @@ def get_unique_strings(bucket_matched):
 
 def get_connected_components(bucket_matched):
 
+    """
+    Args:
+        bucket_matched: matched tuples (list of tuples of form (id_acm, id_dblp))
+
+    Returns: 
+        dictionary with every id as key and assigned clusters as value
+
+    {'539087cf20f70186a0d5d01c': '53e9b47cb7602d9703f80ae7', '53e9b47cb7602d9703f80ae7': '53e9b47cb7602d9703f80ae7', '539087cf20f70186a0d5d01a': '53e9b41ab7602d9703f11e2a',
+    """
+
     unique_strings = get_unique_strings(bucket_matched)
 
     # 1) generate adjacency matrix
@@ -60,6 +70,6 @@ def get_connected_components(bucket_matched):
 
 
     # Print the final node_dict
-    print("Final node_dict:")
-    print(node_dict)
+    #print("Final node_dict:")
+    #print(node_dict)
     return node_dict
