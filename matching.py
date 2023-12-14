@@ -60,8 +60,8 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
         List of tuples of indices [(a,b), (a,c)]
     """
 
-    matched_ids = list()
-    unmatched_ids = list()
+    matched_pairs = list()
+    unmatched_pairs = list()
     
     unique_buckets = set(df1["bucket"]).union(set(df2["bucket"]))
 
@@ -76,19 +76,26 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
             row2 = df2_bucket.iloc[ix2]
 
             if similarity_function(row1, row2) >= threshold: 
-                matched_ids += [(row1["Index"], row2["Index"])]
+                matched_pairs += [(row1, row2)]
             else:
-                unmatched_ids += [(row1["Index"], row2["Index"])]
+                unmatched_pairs += [(row1, row2)]
 
-    unmatched_ids = get_unmatched(matched_ids, unmatched_ids) # TODO not clean
+    #unmatched_pairs = get_unmatched(matched_df["Index"], unmatched_df) # TODO not clean
+    
+    matched_df = pd.DataFrame(matched_pairs, columns=df1.columns)
+    unmatched_df = pd.DataFrame(unmatched_pairs, columns=df1.columns)
                      
-    return matched_ids, unmatched_ids #+ list(unmatched)
+    return matched_df, unmatched_df #+ list(unmatched)
 
-def get_unmatched(matched_ids, unmatched_ids):
-    unique_strings = get_unique_strings(matched_ids)
+def get_unmatched(matched_pairs, unmatched_pairs):
+    """
+    List of index string pairs -> list of unique indexes
+    """
+
+    unique_strings = get_unique_strings(matched_pairs)
 
     # Flatten the list of tuples
-    flat_list = set([item for sublist in unmatched_ids for item in sublist]).difference(unique_strings)
+    flat_list = set([item for sublist in unmatched_pairs for item in sublist]).difference(unique_strings)
 
     # Get unique string values using set
     unique_strings_unmatched = list(flat_list)
@@ -103,8 +110,8 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
     """
 
     combinations = list(product(list(df1.index),list(df2.index)))
-    matched_ids = list()
-    unmatched_ids = list()
+    matched_pairs = list()
+    unmatched_pairs = list()
     
     for ix1, ix2 in tqdm(combinations): # each combination
 
@@ -112,10 +119,10 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
         row2 = df2.iloc[ix2]
 
         if similarity_function(row1, row2) >= threshold: # TODO see todo above
-            matched_ids += [(row1["Index"], row2["Index"])]
+            matched_pairs += [(row1["Index"], row2["Index"])]
         else:
-            unmatched_ids += [(row1["Index"], row2["Index"])]
+            unmatched_pairs += [(row1["Index"], row2["Index"])]
 
-    unmatched_ids = get_unmatched(matched_ids, unmatched_ids) # TODO not clean
+    #unmatched_pairs = get_unmatched(matched_pairs, unmatched_pairs) # TODO not clean
 
-    return matched_ids, unmatched_ids #= list() #+ list(unmatched)
+    return matched_pairs, unmatched_pairs #= list() #+ list(unmatched)
