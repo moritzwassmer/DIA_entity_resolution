@@ -1,3 +1,4 @@
+# TODO transform to sql like: input dfs output 
 def evaluate(truth:set[str], preds:set[str]): #, n:set[str]
 
     """
