@@ -137,7 +137,7 @@ def get_unmatched(matched_pairs, unmatched_pairs): # TODO what is this? still ne
     return unique_strings_unmatched
 """
 
-def matching_spark(df1, df2, similarity_expression, threshold, sfx_1="_acm", sfx_2="_dblp"):
+def matching_spark(df1, df2, similarity_expression, threshold=1, sfx_1="_acm", sfx_2="_dblp"):
 
     # 1) Add suffixes "_acm" and "_dblp" to the column names before join
     df1 = df1.select(
