@@ -1,4 +1,7 @@
 
+# Spark
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
 
 def extract_word_character(author:str): # not applicable anymore for current database scheme, was used for normalized authors
     """
@@ -37,3 +40,5 @@ def buckets_by_author(authors:str):
     characters.sort()
     
     return ", ".join(characters)
+
+buckets_by_author_spark = udf(buckets_by_author, StringType())
