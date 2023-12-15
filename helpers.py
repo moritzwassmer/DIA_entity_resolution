@@ -16,4 +16,4 @@ def df_to_tuples(df, pandas=True):
     if pandas:
         return [tuple(row) for row in df.itertuples(index=False, name=None)]
     else:
-        return None # TODO
+        return df.rdd.map(tuple).collect() # TODO check class
