@@ -2,9 +2,11 @@
 import Levenshtein
 import pandas as pd
 from tqdm import tqdm
-from itertools import combinations, product
+from itertools import  product
 
-from clustering import get_unique_strings
+from params import *
+
+from pyspark.sql.functions import expr, col
 
 def similar_score_str(str1:str, str2:str):
 
@@ -20,6 +22,7 @@ def similar_score_str(str1:str, str2:str):
     similarity = 1 - distance / max(len(str1), len(str2))
     
     return similarity
+
 
 def total_similarity(row1:pd.Series, row2:pd.Series):
 
@@ -133,3 +136,33 @@ def get_unmatched(matched_pairs, unmatched_pairs): # TODO what is this? still ne
     unique_strings_unmatched = list(flat_list)
     return unique_strings_unmatched
 """
+
+def matching_spark(df1, df2, similarity_expression, threshold, sfx_1="_acm", sfx_2="_dblp"):
+
+    # 1) Add suffixes "_acm" and "_dblp" to the column names before join
+    df1 = df1.select(
+        [col(c).alias(c + sfx_1) for c in df1.columns]
+    )
+    df2 = df2.select(
+        [col(c).alias(c + sfx_2)  for c in df2.columns]
+    )
+
+    # 2) a) Calculate Matched rows
+    df1 = df1.repartition("bucket_acm").alias("acm") # hardcoded
+    df2 = df2.repartition("bucket_dblp").alias("dblp")
+
+    bucket_matched_df = df1.join(
+        df2,
+        expr(similarity_expression),
+        how="inner"
+    )
+
+    # 2) b) Calculate Unmatched rows
+    similarity_expression_anti = f"NOT {similarity_expression}"
+    bucket_unmatched_df = df1.join(
+        df2,
+        expr(similarity_expression_anti),
+        how="inner"
+    )
+
+    return bucket_matched_df, bucket_unmatched_df
