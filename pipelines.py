@@ -4,14 +4,14 @@ from matching import *
 from clustering import *
 from params import *
 
-def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author):
+def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author, threshold=1):
 
     # 1) Blocking
     acm["bucket"] =  acm["Authors"].apply(bucket_function)
     dblp["bucket"] =  dblp["Authors"].apply(bucket_function)
 
     # 2) Matching
-    bucket_matched_df, bucket_unmatched_df = match_by_bucket(acm, dblp, similarity_function=matching_similarity, threshold = 0.9)
+    bucket_matched_df, bucket_unmatched_df = match_by_bucket(acm, dblp, similarity_function=matching_similarity, threshold = threshold)
     bucket_matched = df_to_tuples(bucket_matched_df[["Index_acm", "Index_dblp"]])
     bucket_unmatched = df_to_tuples(bucket_unmatched_df[["Index_acm", "Index_dblp"]])
 
@@ -26,10 +26,10 @@ def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_functi
 
     
 
-def baseline_pipeline(matching_similarity, acm, dblp, return_df = False):
+def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, threshold=1):
 
     # 1) Matching
-    unbucket_matched_df, unbucket_unmatched_df = match_without_bucket(acm, dblp, similarity_function=matching_similarity, threshold = 0.9) # TODO RUNTIME
+    unbucket_matched_df, unbucket_unmatched_df = match_without_bucket(acm, dblp, similarity_function=matching_similarity, threshold = threshold) # TODO RUNTIME
     unbucket_matched = df_to_tuples(unbucket_matched_df[["Index_acm", "Index_dblp"]])
     unbucket_unmatched = df_to_tuples(unbucket_unmatched_df[["Index_acm", "Index_dblp"]])
     
