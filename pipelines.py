@@ -46,8 +46,8 @@ def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, thresho
 def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author_spark, threshold=1):
 
     # 1) Blocking
-    acm = acm.withColumn("bucket", buckets_by_author_spark("Authors"))
-    dblp = dblp.withColumn("bucket", buckets_by_author_spark("Authors"))
+    acm = acm.withColumn("bucket", bucket_function("Authors"))
+    dblp = dblp.withColumn("bucket", bucket_function("Authors"))
 
     # 2) Matching
     bucket_matched_df, bucket_unmatched_df = matching_spark(acm, dblp, matching_similarity, threshold=threshold)
