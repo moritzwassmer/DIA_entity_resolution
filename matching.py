@@ -33,7 +33,7 @@ def total_similarity(row1:pd.Series, row2:pd.Series):
     year_sim = row1["Year"] == row2["Year"]
     return (title_sim + venue_sim + year_sim)/3
 
-def exact_match(row1:pd.Series, row2:pd.Series): # not used
+def exact_match(row1:pd.Series, row2:pd.Series): 
 
     """
     exact match of attributes
@@ -45,12 +45,7 @@ def exact_match(row1:pd.Series, row2:pd.Series): # not used
     year_sim = row1["Year"] == row2["Year"]
     return title_sim & venue_sim & year_sim
 
-
-# TODO Write in SQL like commands, hardcoded 
-# SOLVED, but not tested probably wrong. i need to guarantee that row is only added to unmatched if there couldnt be found a match at all
-# TODO return dataframes with full rows instead of only ids
-
-def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
+def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1, sfx_1="_acm", sfx_2="_dblp"):
     
     """
     matches the rows by using the similarity funciton. 
@@ -75,33 +70,25 @@ def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, thr
             row1 = df1_bucket.iloc[ix1]
             row2 = df2_bucket.iloc[ix2]
 
+            pair = tuple(row1[1:]) + tuple(row2[1:])
             if similarity_function(row1, row2) >= threshold: 
-                matched_pairs += [(row1, row2)]
+                matched_pairs += [pair]
             else:
-                unmatched_pairs += [(row1, row2)]
+                unmatched_pairs += [pair]
 
     #unmatched_pairs = get_unmatched(matched_df["Index"], unmatched_df) # TODO not clean
+                
+    colnames = [item + sfx_1 for item in list(df1.columns)] +  [item + sfx_2 for item in list(df1.columns)]
     
-    matched_df = pd.DataFrame(matched_pairs, columns=df1.columns)
-    unmatched_df = pd.DataFrame(unmatched_pairs, columns=df1.columns)
+    
+    matched_df = pd.DataFrame(matched_pairs, columns=colnames)
+    unmatched_df = pd.DataFrame(unmatched_pairs, columns=colnames)
+
+
                      
     return matched_df, unmatched_df #+ list(unmatched)
 
-def get_unmatched(matched_pairs, unmatched_pairs):
-    """
-    List of index string pairs -> list of unique indexes
-    """
-
-    unique_strings = get_unique_strings(matched_pairs)
-
-    # Flatten the list of tuples
-    flat_list = set([item for sublist in unmatched_pairs for item in sublist]).difference(unique_strings)
-
-    # Get unique string values using set
-    unique_strings_unmatched = list(flat_list)
-    return unique_strings_unmatched
-
-def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1):
+def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1, sfx_1="_acm", sfx_2="_dblp"):
     """
     matches the rows by using the similarity funciton without using the bucket column in the dataframe 
 
@@ -118,11 +105,31 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
         row1 = df1.iloc[ix1]
         row2 = df2.iloc[ix2]
 
-        if similarity_function(row1, row2) >= threshold: # TODO see todo above
-            matched_pairs += [(row1["Index"], row2["Index"])]
+        pair = tuple(row1) + tuple(row2)
+        if similarity_function(row1, row2) >= threshold: 
+            matched_pairs += [pair]
         else:
-            unmatched_pairs += [(row1["Index"], row2["Index"])]
+            unmatched_pairs += [pair]
 
-    #unmatched_pairs = get_unmatched(matched_pairs, unmatched_pairs) # TODO not clean
+    colnames = [item + sfx_1 for item in list(df1.columns)] +  [item + sfx_2 for item in list(df1.columns)]
+    
+    matched_df = pd.DataFrame(matched_pairs, columns=colnames)
+    unmatched_df = pd.DataFrame(unmatched_pairs, columns=colnames)
 
-    return matched_pairs, unmatched_pairs #= list() #+ list(unmatched)
+    return matched_df, unmatched_df #= list() #+ list(unmatched)
+
+"""
+def get_unmatched(matched_pairs, unmatched_pairs): # TODO what is this? still needed?
+
+    "List of index string pairs -> list of unique indexes"
+
+
+    unique_strings = get_unique_strings(matched_pairs)
+
+    # Flatten the list of tuples
+    flat_list = set([item for sublist in unmatched_pairs for item in sublist]).difference(unique_strings)
+
+    # Get unique string values using set
+    unique_strings_unmatched = list(flat_list)
+    return unique_strings_unmatched
+"""

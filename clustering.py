@@ -1,4 +1,5 @@
 import numpy as np
+from helpers import *
 
 def construct_adjacency_matrix(bucket_matched):
     # Step 1: Identify unique nodes
@@ -16,13 +17,6 @@ def construct_adjacency_matrix(bucket_matched):
         adj_matrix[i, j] = 1
         adj_matrix[j, i] = 1  # If the graph is undirected, include this line
     return adj_matrix
-
-def get_unique_strings(bucket_matched):
-    flat_list = [item for sublist in bucket_matched for item in sublist]
-
-    # Get unique string values using set
-    unique_strings = flat_list
-    return unique_strings
 
 def get_connected_components(bucket_matched):
 
