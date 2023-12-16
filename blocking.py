@@ -31,7 +31,7 @@ def buckets_by_author(authors:str):
         parts = author.split()
         
         if len(parts) < 2:
-            characters.update({parts[0][0]}) # first character
+            characters.update({parts[0]}) # first character # TODO was parts[0][0]
         else:
             characters.update({parts[len(parts)-1][0]}) # letztes word, erster char
     
