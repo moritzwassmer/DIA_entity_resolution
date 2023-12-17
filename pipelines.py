@@ -25,8 +25,6 @@ def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_functi
     else:
         return bucket_matched, bucket_unmatched
 
-    
-
 def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, threshold=1):
 
     # 1) Matching
@@ -56,16 +54,16 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
     # retrieve indices
     bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
     bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
-
-    # convet to tuples
-    bucket_matched = df_to_tuples(bucket_matched, False)
-    #bucket_unmatched = df_to_tuples(bucket_unmatched, False) # TODO Causes crash
+ 
+    # convet to tuples # TODO Causes Py4J Error when data size large
+    #bucket_matched = df_to_tuples(bucket_matched, False) 
+    #bucket_unmatched = df_to_tuples(bucket_unmatched, False) 
 
     # clustering - # TODO Nicht parallel
-    clusters = get_connected_components(bucket_matched) 
-    final_df = resolve_df(bucket_matched_df.toPandas(), bucket_unmatched_df.toPandas(), clusters, acm.toPandas(), dblp.toPandas())
+    #clusters = get_connected_components(bucket_matched) 
+    #final_df = resolve_df(bucket_matched_df.toPandas(), bucket_unmatched_df.toPandas(), clusters, acm.toPandas(), dblp.toPandas())
 
     if return_df:
         return bucket_matched_df, bucket_unmatched_df
     else:
-        return bucket_matched, None# bucket_unmatched # TODO Causes crash
+        return bucket_matched,  bucket_unmatched # TODO Causes crash
