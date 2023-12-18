@@ -3,20 +3,6 @@
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
-def extract_word_character(author:str): # not applicable anymore for current database scheme, was used for normalized authors
-    """
-    takes SINGLE author. eg "moritz wassmer" -> (m, w)
-    """
-    words = author.split()
-    tpl = tuple()
-    num_words = len(words)
-
-    if num_words < 2:
-        tpl = (words[0][0], "") # first word first character
-    else:
-        tpl = (words[0][0], words[num_words-1][0]) # last word last character
-    return tpl
-
 def buckets_by_author(authors:str):
     """
     takes MULTIPLE authors, takes first chars of first name and last name and creates a sorted list with unique characters
@@ -40,5 +26,8 @@ def buckets_by_author(authors:str):
     characters.sort()
     
     return ", ".join(characters)
+
+def bucket_by_year(year:int):
+    return year
 
 buckets_by_author_spark = udf(buckets_by_author, StringType())

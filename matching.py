@@ -30,11 +30,11 @@ def total_similarity(row1:pd.Series, row2:pd.Series):
     averaged similarity based on 3 attributes
     """
 
-    #authors_sim = similar_score_str(row1["Authors"], row2["Authors"])
+    authors_sim = similar_score_str(row1["Authors"], row2["Authors"])
     title_sim = similar_score_str(row1["Title"], row2["Title"])
     venue_sim = similar_score_str(row1["Venue"], row2["Venue"])
     year_sim = row1["Year"] == row2["Year"]
-    return (title_sim + venue_sim + year_sim)/3
+    return (authors_sim+ title_sim + venue_sim + year_sim)/3
 
 def exact_match(row1:pd.Series, row2:pd.Series): 
 
@@ -42,11 +42,11 @@ def exact_match(row1:pd.Series, row2:pd.Series):
     exact match of attributes
     """
 
-    #authors_sim = row1["Authors"] == row2["Authors"]
+    authors_sim = row1["Authors"] == row2["Authors"]
     title_sim = row1["Title"] == row2["Title"]
     venue_sim = row1["Venue"] == row2["Venue"]
     year_sim = row1["Year"] == row2["Year"]
-    return title_sim & venue_sim & year_sim
+    return authors_sim & title_sim & venue_sim & year_sim
 
 def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1, sfx_1="_acm", sfx_2="_dblp"):
     
