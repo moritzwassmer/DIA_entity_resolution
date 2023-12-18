@@ -79,7 +79,7 @@ def resolve_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df):
     # 2) Extract rows which should be kept
     toKeep = set(matched_kept).union(set(unmatched))
 
-    filtered_dblp_df.loc[:, "ToKeep"] = filtered_dblp_df["Index"].apply(toKeepHelper)
+    filtered_dblp_df["ToKeep"] = filtered_dblp_df["Index"].apply(toKeepHelper)
     filtered_dblp_df["ToKeep"] = filtered_dblp_df["Index"].apply(toKeepHelper)
 
     result_acm = filtered_acm_df.loc[filtered_acm_df["ToKeep"]==True]
