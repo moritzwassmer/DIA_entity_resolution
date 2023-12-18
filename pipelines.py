@@ -52,11 +52,11 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
 
     # 3) Clustering
     # retrieve indices
-    bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
-    bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
+    bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
+    bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
  
-    # convet to tuples # TODO Causes Py4J Error when data size large
-    #bucket_matched = df_to_tuples(bucket_matched, False) 
+    # convert to tuples # TODO Causes Py4J Error when data size large
+    bucket_matched = df_to_tuples(bucket_matched, False) 
     #bucket_unmatched = df_to_tuples(bucket_unmatched, False) 
 
     # clustering - # TODO Nicht parallel
