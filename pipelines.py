@@ -42,7 +42,7 @@ def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_functi
     # 3) Clustering
     clusters = get_connected_components(bucket_matched)
 
-    unmatched_kept = extract_unmatched(bucket_matched, bucket_unmatched)
+    unmatched_kept = extract_unmatched_2(bucket_matched, acm, dblp)
     final_df = resolve_df(bucket_matched, unmatched_kept, clusters, acm, dblp)
 
     if return_df:
@@ -59,7 +59,7 @@ def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, thresho
     
     # 2) Clustering
     clusters = get_connected_components(unbucket_matched)
-    unmatched_kept = extract_unmatched(unbucket_matched, unbucket_unmatched)
+    unmatched_kept = extract_unmatched_2(unbucket_matched, acm, dblp)
     final_df = resolve_df(unbucket_matched, unmatched_kept, clusters, acm, dblp)
 
     if return_df:
