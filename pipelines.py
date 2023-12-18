@@ -78,8 +78,8 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
 
     # 3) Clustering
     # retrieve indices
-    bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
-    bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
+    bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
+    bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
  
     # convert to tuples  Causes Py4J Error when data size large -> no it doesnt, only the bucket_unmatched causes an error
     bucket_matched = df_to_tuples(bucket_matched, False) 

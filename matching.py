@@ -157,7 +157,7 @@ def matching_spark(df1, df2, similarity_expression, threshold=1, sfx_1="_acm", s
         how="inner"
     )
 
-    # 2) b) Calculate Unmatched rows # TODO find more efficient way
+    # 2) b) Calculate Unmatched rows 
     similarity_expression_anti = f"NOT {similarity_expression}"
     bucket_unmatched_df = df1.join(
         df2,
