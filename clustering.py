@@ -76,18 +76,8 @@ def resolve_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df):
     # 1) summarise clusters to 1 entity
     matched_kept = set(clusters.values())
 
-    # 2) Extract unmatched ids
-    unique_strings = get_unique_strings(matched)
-
-    # Flatten the list of tuples
-    flat_list = set([item for sublist in unmatched for item in sublist]).difference(unique_strings)
-
-    # Get unique string values using set
-    unique_strings_unmatched = list(flat_list)
-    unmatched_kept = unique_strings_unmatched
-
-    # 3) Extract rows which should be kept
-    toKeep = set(matched_kept).union(set(unmatched_kept))
+    # 2) Extract rows which should be kept
+    toKeep = set(matched_kept).union(set(unmatched))
 
     filtered_acm_df["ToKeep"] = filtered_acm_df["Index"].apply(toKeepHelper)
     filtered_dblp_df["ToKeep"] = filtered_dblp_df["Index"].apply(toKeepHelper)

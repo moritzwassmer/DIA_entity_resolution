@@ -5,6 +5,29 @@ from clustering import *
 from params import *
 from pyspark.sql.functions import  col
 
+def extract_unmatched(matched, unmatched): # TODO make more readable
+    ### EXTRACT UNMATCHED IDS
+    # 2) Extract unmatched ids
+    unique_strings = get_unique_strings(matched)
+
+    # Flatten the list of tuples
+    flat_list = set([item for sublist in unmatched for item in sublist]).difference(unique_strings)
+
+    # Get unique string values using set
+    unmatched_kept = list(flat_list)
+
+    return unmatched_kept
+
+def extract_unmatched_2(matched, acm, dblp): # matched is list of tuples, acm and dblp pandas dataframes
+    ### EXTRACT UNMATCHED IDS
+    # 2) Extract unmatched ids
+    unique_strings = get_unique_strings(matched)
+
+    unmatched_kept = set(acm["Index"].tolist()).union(set(dblp["Index"].tolist())).difference(unique_strings)
+
+    return unmatched_kept
+
+
 def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author, threshold=1):
 
     # 1) Blocking
@@ -18,7 +41,9 @@ def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_functi
 
     # 3) Clustering
     clusters = get_connected_components(bucket_matched)
-    final_df = resolve_df(bucket_matched, bucket_unmatched, clusters, acm, dblp)
+
+    unmatched_kept = extract_unmatched(bucket_matched, bucket_unmatched)
+    final_df = resolve_df(bucket_matched, unmatched_kept, clusters, acm, dblp)
 
     if return_df:
         return bucket_matched_df, bucket_unmatched_df
@@ -34,7 +59,8 @@ def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, thresho
     
     # 2) Clustering
     clusters = get_connected_components(unbucket_matched)
-    final_df = resolve_df(unbucket_matched, unbucket_unmatched, clusters, acm, dblp)
+    unmatched_kept = extract_unmatched(unbucket_matched, unbucket_unmatched)
+    final_df = resolve_df(unbucket_matched, unmatched_kept, clusters, acm, dblp)
 
     if return_df:
         return unbucket_matched_df, unbucket_unmatched_df
@@ -55,15 +81,18 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
     bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
     bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")]).dropDuplicates()
  
-    # convert to tuples # TODO Causes Py4J Error when data size large
+    # convert to tuples  Causes Py4J Error when data size large -> no it doesnt, only the bucket_unmatched causes an error
     bucket_matched = df_to_tuples(bucket_matched, False) 
-    #bucket_unmatched = df_to_tuples(bucket_unmatched, False) 
+    #bucket_unmatched = df_to_tuples(bucket_unmatched, False) #, bucket_unmatched is too big for the replication experiments and would cause a crash
 
-    # clustering - # TODO Nicht parallel
-    #clusters = get_connected_components(bucket_matched) 
-    #final_df = resolve_df(bucket_matched_df.toPandas(), bucket_unmatched_df.toPandas(), clusters, acm.toPandas(), dblp.toPandas())
+    # clustering - Spark not used
+    clusters = get_connected_components(bucket_matched) 
+
+    acm, dblp = acm.toPandas(), dblp.toPandas()
+    bucket_unmatched_kept = extract_unmatched_2(bucket_matched, acm, dblp) 
+    final_df = resolve_df(bucket_matched, bucket_unmatched_kept, clusters, acm, dblp)
 
     if return_df:
-        return bucket_matched_df, bucket_unmatched_df
+        return bucket_matched_df#, bucket_unmatched_df
     else:
-        return bucket_matched,  bucket_unmatched # TODO Causes crash
+        return bucket_matched#,  bucket_unmatched is too big for the replication experiments and would cause a crash
