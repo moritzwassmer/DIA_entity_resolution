@@ -11,10 +11,12 @@ def apply_bucket(df, bucket_function):
     if bucket_function.__name__ == buckets_by_author.__name__:
         df["bucket"] =  df["Authors"].apply(bucket_function)
     elif bucket_function.__name__ == bucket_by_year.__name__:
-        df["bucket"] =  df["Year"].apply(bucket_function)
+        df["bucket"] =  df["Year"].apply(bucket_function) 
+    elif bucket_function.__name__ == bucket_by_year_venue.__name__:
+        df['bucket'] = df.apply(lambda row: bucket_by_year_venue(row['Year'], row['Venue']), axis=1)
     elif bucket_function.__name__ == buckets_by_author_spark.__name__:
         df = df.withColumn("bucket", bucket_function("Authors"))
-    elif bucket_function.__name__ == bucket_by_year_spark.__name__:
+    elif bucket_function.__name__ == buckets_by_year_spark.__name__:
         df = df.withColumn("bucket", bucket_function("Year"))
     else:
         raise NotImplementedError()
@@ -51,6 +53,9 @@ def buckets_by_author(authors:str):
 
 def bucket_by_year(year:int):
     return year
+
+def bucket_by_year_venue(year:int, venue:str):
+    return " ".join([str(year), "sigmod" if "sigmod" in venue.lower() else "vldb"])
 
 buckets_by_author_spark = udf(buckets_by_author, StringType())
 
