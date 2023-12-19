@@ -1,9 +1,10 @@
 # TODO add final_df in return
-from blocking import buckets_by_author, buckets_by_author_spark
+from blocking import *
 from matching import *
 from clustering import *
 from params import *
 from pyspark.sql.functions import  col
+from helpers import *
 
 def extract_unmatched(matched, unmatched): # TODO make more readable
     ### EXTRACT UNMATCHED IDS
@@ -28,11 +29,12 @@ def extract_unmatched_2(matched, acm, dblp): # matched is list of tuples, acm an
     return unmatched_kept
 
 
+
 def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author, threshold=1):
 
     # 1) Blocking
-    acm["bucket"] =  acm["Authors"].apply(bucket_function)
-    dblp["bucket"] =  dblp["Authors"].apply(bucket_function)
+    acm = apply_bucket(acm, bucket_function)
+    dblp =  apply_bucket(dblp, bucket_function)
 
     # 2) Matching
     bucket_matched_df, bucket_unmatched_df = match_by_bucket(acm, dblp, similarity_function=matching_similarity, threshold = threshold)
@@ -70,8 +72,8 @@ def baseline_pipeline(matching_similarity, acm, dblp, return_df = False, thresho
 def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author_spark, threshold=1):
 
     # 1) Blocking
-    acm = acm.withColumn("bucket", bucket_function("Authors"))
-    dblp = dblp.withColumn("bucket", bucket_function("Authors"))
+    acm = apply_bucket(acm, bucket_function)
+    dblp =  apply_bucket(dblp, bucket_function)
 
     # 2) Matching
     bucket_matched_df, bucket_unmatched_df = matching_spark(acm, dblp, matching_similarity, threshold=threshold)

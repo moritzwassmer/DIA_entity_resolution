@@ -60,3 +60,42 @@ def modify_and_concat(df, num_iterations):
     result_df = pd.concat(modified_dfs, ignore_index=True)
 
     return result_df
+
+def contains_str(col:pd.Series, pattern:str):
+    """ 
+    creates new column wether rows within the column contains the pattern
+    eg. contains_str(filtered_acm_df['Venue'], 'sigmod')
+    """
+    return col.str.contains(pattern, case=False)
+
+
+def custom_author(authors:str):
+    """
+    takes MULTIPLE authors in string seperated by comma and creates set of tuples of (first name character, last name)
+
+    custom_author("Moritz Wassmer, Frederick Michael Kraft")
+
+    'F Kraft, M Wassmer'
+
+    """
+    
+    text_set = set()
+    
+    for author in authors.split(', '): # name1, name 2:
+        
+        parts = author.split()
+        
+        if len(parts) < 2:
+            tuplee = ("", parts[0]) # ("", last word)
+            text_set.update({tuplee}) 
+        else:
+            tuplee = (parts[0][0], parts[len(parts)-1])
+            text_set.update({tuplee}) # (first char, last word)
+    
+    #print(text_set)
+    text_list = list(text_set)#.sort()
+    text_list.sort(key=lambda x: x[1]) # sort based on secound element
+
+    result = ', '.join([' '.join(item) for item in text_list])
+    
+    return result

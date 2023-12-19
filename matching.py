@@ -8,7 +8,7 @@ from params import *
 
 from pyspark.sql.functions import expr, col
 
-def similar_score_str(str1:str, str2:str):
+def levenshtein(str1:str, str2:str):
 
     """
     compare 2 strings based on Levenshtein distance
@@ -24,20 +24,19 @@ def similar_score_str(str1:str, str2:str):
     return similarity
 
 
-def total_similarity(row1:pd.Series, row2:pd.Series):
+def simple_similarity(row1:pd.Series, row2:pd.Series):
 
     """
     averaged similarity based on 3 attributes
     """
 
-    authors_sim = similar_score_str(row1["Authors"], row2["Authors"])
-    title_sim = similar_score_str(row1["Title"], row2["Title"])
-    venue_sim = similar_score_str(row1["Venue"], row2["Venue"])
+    authors_sim = levenshtein(row1["Authors"], row2["Authors"])
+    title_sim = levenshtein(row1["Title"], row2["Title"])
+    venue_sim = levenshtein(row1["Venue"], row2["Venue"])
     year_sim = row1["Year"] == row2["Year"]
-    return (authors_sim+ title_sim + venue_sim + year_sim)/3
+    return (authors_sim+ title_sim + venue_sim + year_sim)/4
 
 def exact_match(row1:pd.Series, row2:pd.Series): 
-
     """
     exact match of attributes
     """
@@ -120,22 +119,6 @@ def match_without_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function
     unmatched_df = pd.DataFrame(unmatched_pairs, columns=colnames)
 
     return matched_df, unmatched_df #= list() #+ list(unmatched)
-
-"""
-def get_unmatched(matched_pairs, unmatched_pairs): # TODO what is this? still needed?
-
-    "List of index string pairs -> list of unique indexes"
-
-
-    unique_strings = get_unique_strings(matched_pairs)
-
-    # Flatten the list of tuples
-    flat_list = set([item for sublist in unmatched_pairs for item in sublist]).difference(unique_strings)
-
-    # Get unique string values using set
-    unique_strings_unmatched = list(flat_list)
-    return unique_strings_unmatched
-"""
 
 def matching_spark(df1, df2, similarity_expression, threshold=1, sfx_1="_acm", sfx_2="_dblp"): 
 
