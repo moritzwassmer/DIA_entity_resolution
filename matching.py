@@ -47,6 +47,18 @@ def exact_match(row1:pd.Series, row2:pd.Series):
     year_sim = row1["Year"] == row2["Year"]
     return authors_sim & title_sim & venue_sim & year_sim
 
+# 1) year : should be exactly the same. if +-1 is maybe still a match if everything else is a match
+# 2) author : i could imagine middle names could be missing sometimes and sometimes not -> only compare first character of firs and last name eg. "m. tamer özsu"
+# 3) venue : just check if both contain sigmod/vldb 
+# 4) title : levenstein/jaccard > 0.6 should do
+
+def fancy_similarity(row1:pd.Series, row2:pd.Series):
+    year_sim = row1["Year"] == row2["Year"]
+    authors_sim = levenshtein(row1["Authors_new"], row2["Authors_new"]) > 0.9
+    title_sim = levenshtein(row1["Title"], row2["Title"]) > 0.9
+    venue_sim = True if row1["isSigmod"] and row1["isSigmod"] or row1["isVLDB"] and row1["isVLDB"] else False
+    return title_sim & authors_sim & venue_sim & year_sim
+
 def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1, sfx_1="_acm", sfx_2="_dblp"):
     
     """
