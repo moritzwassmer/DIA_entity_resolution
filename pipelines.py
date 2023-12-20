@@ -6,6 +6,7 @@ from params import *
 from pyspark.sql.functions import  col
 from helpers import *
 
+from pyspark.sql import SparkSession
 import time
 
 def extract_unmatched(matched, unmatched): # TODO make more readable
@@ -29,6 +30,9 @@ def extract_unmatched_2(matched, acm, dblp): # matched is list of tuples, acm an
     unmatched_kept = set(acm["Index"].tolist()).union(set(dblp["Index"].tolist())).difference(unique_strings)
 
     return unmatched_kept
+
+def extract_unmatched_2_spark(matched, acm, dblp):
+    pass # TODO
 
 
 
@@ -83,11 +87,11 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
     # 3) Clustering
     # retrieve indices
     start_time = time.time()
-    bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
+    bucket_matched_index_df = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
     bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
 
     # convert to tuples  Causes Py4J Error when data size large -> no it doesnt, only the bucket_unmatched causes an error
-    bucket_matched = df_to_tuples(bucket_matched, False) 
+    bucket_matched = df_to_tuples(bucket_matched_index_df, False) 
     #bucket_unmatched = df_to_tuples(bucket_unmatched, False) #, bucket_unmatched is too big for the replication experiments and would cause a crash
 
     end_time = time.time()
@@ -95,7 +99,7 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
 
     print("matching time:"+ str(er_time))
 
-    # clustering - Spark not used
+    # clustering - Spark not used # TODO SPARK IMPLEMENTATION
     start_time = time.time()
     clusters = get_connected_components(bucket_matched) 
     end_time = time.time()
@@ -104,9 +108,9 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
     print("clustering time:"+ str(er_time))
 
     start_time = time.time()
-    acm, dblp = acm.toPandas(), dblp.toPandas()
-    bucket_unmatched_kept = extract_unmatched_2(bucket_matched, acm, dblp) 
-    final_df = resolve_df(bucket_matched, bucket_unmatched_kept, clusters, acm, dblp)
+    acm_pd, dblp_pd = acm.toPandas(), dblp.toPandas()
+    bucket_unmatched_kept = extract_unmatched_2(bucket_matched, acm_pd, dblp_pd) 
+    final_df = resolve_df(bucket_matched, bucket_unmatched_kept, clusters, acm_pd, dblp_pd)
 
     end_time = time.time()
     er_time = round(end_time - start_time,2)

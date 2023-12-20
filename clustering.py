@@ -1,6 +1,10 @@
 from helpers import *
 import pandas as pd
 
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.types import BooleanType
+
 def construct_edge_list(bucket_matched):
     # Step 1: Identify unique nodes
     unique_strings = get_unique_strings(bucket_matched)
@@ -76,3 +80,31 @@ def resolve_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df):
     total_result = pd.concat([result_acm, result_dblp])
 
     return total_result
+
+def resolve_spark_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df): # TODO not tested
+    spark = SparkSession.builder.appName("ER").getOrCreate()
+
+    # 1) Summarize clusters to 1 entity
+    matched_kept = set(clusters.values())
+
+    # 2) Extract rows which should be kept
+    toKeep = set(matched_kept).union(set(unmatched))
+
+    # Define a user-defined function (UDF) to filter rows based on the "Index" column
+    toKeep_udf = F.udf(lambda index: index in toKeep, BooleanType())
+
+    # Apply the UDF to create a new column "ToKeep" in both DataFrames
+    filtered_acm_df = filtered_acm_df.withColumn("ToKeep", toKeep_udf("Index"))
+    filtered_dblp_df = filtered_dblp_df.withColumn("ToKeep", toKeep_udf("Index"))
+
+    # Filter rows based on the "ToKeep" column
+    result_acm_df = filtered_acm_df.filter("ToKeep = true")
+    result_dblp_df = filtered_dblp_df.filter("ToKeep = true")
+
+    # Union the DataFrames
+    total_result_df = result_acm_df.union(result_dblp_df)
+
+    return total_result_df
+
+# Example usage:
+# result_spark_df = resolve_spark_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df)
