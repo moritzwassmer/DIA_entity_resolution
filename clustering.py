@@ -1,26 +1,16 @@
-import numpy as np
 from helpers import *
 import pandas as pd
 
-def construct_adjacency_matrix(bucket_matched):
+def construct_edge_list(bucket_matched):
     # Step 1: Identify unique nodes
     unique_strings = get_unique_strings(bucket_matched)
 
-    # Step 2: Create an empty adjacency matrix
-    num_nodes = len(unique_strings)
-    adj_matrix = np.zeros((num_nodes, num_nodes), dtype=int)
+    # Step 2: Create an edge list
+    edge_list = [(edge[0], edge[1]) for edge in bucket_matched]
 
-    # Step 3: Populate the adjacency matrix
-    node_index = {node: index for index, node in enumerate(unique_strings)}
-
-    for edge in bucket_matched:
-        i, j = node_index[edge[0]], node_index[edge[1]]
-        adj_matrix[i, j] = 1
-        adj_matrix[j, i] = 1  # If the graph is undirected, include this line
-    return adj_matrix
+    return edge_list
 
 def get_connected_components(bucket_matched):
-
     """
     Args:
         bucket_matched: matched tuples (list of tuples of form (id_acm, id_dblp))
@@ -28,44 +18,42 @@ def get_connected_components(bucket_matched):
     Returns: 
         dictionary with every id as key and assigned clusters as value
 
-    {'539087cf20f70186a0d5d01c': '53e9b47cb7602d9703f80ae7', '53e9b47cb7602d9703f80ae7': '53e9b47cb7602d9703f80ae7', '539087cf20f70186a0d5d01a': '53e9b41ab7602d9703f11e2a',
+        {'539087cf20f70186a0d5d01c': '53e9b47cb7602d9703f80ae7', '53e9b47cb7602d9703f80ae7': '53e9b47cb7602d9703f80ae7', '539087cf20f70186a0d5d01a': '53e9b41ab7602d9703f11e2a',
     """
 
     unique_strings = get_unique_strings(bucket_matched)
 
-    # 1) generate adjacency matrix
-    adj_matrix = construct_adjacency_matrix( bucket_matched)
+    # 1) generate edge list
+    edge_list = construct_edge_list(bucket_matched)
 
-        # Get the number of nodes
-    num_nodes = adj_matrix.shape[0]
+    # Get the number of nodes
+    num_nodes = len(unique_strings)
 
     # 2) generate initial clusters (own strings)
     node_dict = {}
     for node in unique_strings:
         node_dict[node] = node
-    node_dict
 
     # 3) Fixed point iteration
     updated = True
     while updated:
         updated = False
-        for i in range(num_nodes):     
-            current_node = unique_strings[i]
-            current_string = node_dict[current_node]
+        for edge in edge_list:
+            node_i, node_j = edge
 
-            # Get all neighboring strings
-            neighboring_strings = [node_dict[unique_strings[j]] for j in range(num_nodes) if adj_matrix[i, j] == 1]
+            # Get strings associated with nodes
+            string_i, string_j = node_dict[node_i], node_dict[node_j]
 
-            # Assign the maximum value among the current string and neighboring strings
-            new_string = max([current_string] + neighboring_strings)
+            # Assign the maximum value among the current strings
+            new_string = max(string_i, string_j)
 
-            if new_string > current_string:
-                node_dict[current_node] = new_string
+            if new_string > string_i:
+                node_dict[node_i] = new_string
+                updated = True
+            if new_string > string_j:
+                node_dict[node_j] = new_string
                 updated = True
 
-    # Print the final node_dict
-    #print("Final node_dict:")
-    #print(node_dict)
     return node_dict
 
 def resolve_df(matched, unmatched, clusters, filtered_acm_df, filtered_dblp_df):
