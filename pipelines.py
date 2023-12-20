@@ -6,6 +6,8 @@ from params import *
 from pyspark.sql.functions import  col
 from helpers import *
 
+import time
+
 def extract_unmatched(matched, unmatched): # TODO make more readable
     ### EXTRACT UNMATCHED IDS
     # 2) Extract unmatched ids
@@ -80,19 +82,36 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
 
     # 3) Clustering
     # retrieve indices
+    start_time = time.time()
     bucket_matched = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
     bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
- 
+
     # convert to tuples  Causes Py4J Error when data size large -> no it doesnt, only the bucket_unmatched causes an error
     bucket_matched = df_to_tuples(bucket_matched, False) 
     #bucket_unmatched = df_to_tuples(bucket_unmatched, False) #, bucket_unmatched is too big for the replication experiments and would cause a crash
 
-    # clustering - Spark not used
-    clusters = get_connected_components(bucket_matched) 
+    end_time = time.time()
+    er_time = round(end_time - start_time,2)
 
+    print("matching time:"+ str(er_time))
+
+    # clustering - Spark not used
+    start_time = time.time()
+    clusters = get_connected_components(bucket_matched) 
+    end_time = time.time()
+    er_time = round(end_time - start_time,2)
+
+    print("clustering time:"+ str(er_time))
+
+    start_time = time.time()
     acm, dblp = acm.toPandas(), dblp.toPandas()
     bucket_unmatched_kept = extract_unmatched_2(bucket_matched, acm, dblp) 
     final_df = resolve_df(bucket_matched, bucket_unmatched_kept, clusters, acm, dblp)
+
+    end_time = time.time()
+    er_time = round(end_time - start_time,2)
+
+    print("resolving time:"+ str(er_time))
 
     if return_df:
         return bucket_matched_df#, bucket_unmatched_df
