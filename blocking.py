@@ -2,24 +2,28 @@
 # Spark
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType, IntegerType
+import pandas as pd
 
 def apply_bucket(df, bucket_function):
 
     """creates a new column by choosing the column """
 
-
-    if bucket_function.__name__ == buckets_by_author.__name__:
-        df["bucket"] =  df["Authors"].apply(bucket_function)
-    elif bucket_function.__name__ == bucket_by_year.__name__:
-        df["bucket"] =  df["Year"].apply(bucket_function) 
-    elif bucket_function.__name__ == bucket_by_year_venue.__name__:
-        df['bucket'] = df.apply(lambda row: bucket_by_year_venue(row['Year'], row['Venue']), axis=1)
-    elif bucket_function.__name__ == buckets_by_author_spark.__name__:
-        df = df.withColumn("bucket", bucket_function("Authors"))
-    elif bucket_function.__name__ == buckets_by_year_spark.__name__:
-        df = df.withColumn("bucket", bucket_function("Year"))
+    if isinstance(df, pd.DataFrame):
+        if bucket_function.__name__ == buckets_by_author.__name__:
+            df["bucket"] =  df["Authors"].apply(bucket_function)
+        elif bucket_function.__name__ == bucket_by_year.__name__:
+            df["bucket"] =  df["Year"].apply(bucket_function) 
+        elif bucket_function.__name__ == bucket_by_year_venue.__name__:
+            df['bucket'] = df.apply(lambda row: bucket_by_year_venue(row['Year'], row['Venue']), axis=1)
+        else:
+            raise NotImplementedError()
     else:
-        raise NotImplementedError()
+        if bucket_function.__name__ == buckets_by_author.__name__:
+            df = df.withColumn("bucket", bucket_function("Authors"))
+        elif bucket_function.__name__ == bucket_by_year.__name__:
+            df = df.withColumn("bucket", bucket_function("Year"))
+        else:
+            raise NotImplementedError()
     return df
 
         

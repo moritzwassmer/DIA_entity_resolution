@@ -50,7 +50,7 @@ def exact_match(row1:pd.Series, row2:pd.Series):
 # 1) year : should be exactly the same. if +-1 is maybe still a match if everything else is a match
 # 2) author : i could imagine middle names could be missing sometimes and sometimes not -> only compare first character of firs and last name eg. "m. tamer özsu"
 # 3) venue : just check if both contain sigmod/vldb 
-# 4) title : levenstein/jaccard > 0.6 should do
+# 4) title : levenstein/jaccard > 0.9 should do
 
 def fancy_similarity(row1:pd.Series, row2:pd.Series):
     year_sim = row1["Year"] == row2["Year"]

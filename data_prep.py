@@ -58,7 +58,7 @@ def parse_text(lines):
             authors_string = line[2:].strip()
             current_record['Authors'] = authors_string#.setdefault('Authors', []).extend(authors_string.split(', '))
         elif line.startswith('#t'):
-            current_record['Year'] = int(line[2:].strip())
+            current_record['Year'] = line[2:].strip()
         elif line.startswith('#c'):
             current_record['Venue'] = line[2:].strip()
         elif line.startswith('#index'):
