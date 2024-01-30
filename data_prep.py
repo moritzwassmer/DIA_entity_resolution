@@ -3,18 +3,7 @@ from tqdm import tqdm
 
 def cast_df(df:pd.DataFrame):
 
-    """
-
-    Casts dataframes column types like below:
-
-    Title      string[python]
-    Authors    string[python]
-    Year                Int64
-    Venue      string[python]
-    Index      string[python]
-    """
-
-    df['Year'] = df['Year'].astype('Int64')  # Use 'Int64' to allow for NaN values in integer column
+    df['Year'] = df['Year'].astype('Int64')  
     df['Venue'] = df['Venue'].astype('string')
     df['Index'] = df['Index'].astype('string')
     df['Title'] = df['Title'].astype('string')
