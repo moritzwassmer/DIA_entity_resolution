@@ -14,7 +14,6 @@ def levenshtein(str1:str, str2:str):
     compare 2 strings based on Levenshtein distance
     """
 
-
     # Calculate Levenshtein distance
     distance = Levenshtein.distance(str1, str2)
 
