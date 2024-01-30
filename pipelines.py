@@ -36,7 +36,7 @@ def extract_unmatched_2_spark(matched, acm, dblp):
 
 
 
-def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author, threshold=1):
+def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_function=buckets_by_author, threshold=1, return_final_df=False):
 
     # 1) Blocking
     acm = apply_bucket(acm, bucket_function)
