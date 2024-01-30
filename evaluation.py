@@ -9,10 +9,10 @@ def evaluate(truth:set[str], preds:set[str]): #, n:set[str]
     tp = len(truth.intersection(preds))
 
     # Calculate False Positives (FP)
-    fp = len(preds - truth)
+    fn = len(preds - truth)
 
     # Calculate False Negatives (FN)
-    fn = len(truth - preds)
+    fp = len(truth - preds)
 
     # TN
     #tn =len(n) - fn # never used anyways
