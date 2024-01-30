@@ -52,11 +52,10 @@ def modify_and_concat(df, num_iterations):
     modified_dfs = []
 
     for _ in range(num_iterations):
-        # Apply modifications to specified columns
+        # Apply modifications 
         df_modified = df.apply(modify_columns, axis=1)
         modified_dfs.append(df_modified)
 
-    # Concatenate the modified DataFrames
     result_df = pd.concat(modified_dfs, ignore_index=True)
 
     return result_df
