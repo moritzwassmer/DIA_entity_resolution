@@ -56,7 +56,7 @@ def fancy_similarity(row1:pd.Series, row2:pd.Series):
     year_sim = row1["Year"] == row2["Year"]
     authors_sim = levenshtein(row1["Authors_new"], row2["Authors_new"]) > 0.9
     title_sim = levenshtein(row1["Title"], row2["Title"]) > 0.9
-    venue_sim = True if row1["isSigmod"] and row1["isSigmod"] or row1["isVLDB"] and row1["isVLDB"] else False
+    venue_sim = True if row1["isSigmod"] and row2["isSigmod"] or row1["isVLDB"] and row2["isVLDB"] else False
     return title_sim & authors_sim & venue_sim & year_sim
 
 def match_by_bucket(df1:pd.DataFrame, df2:pd.DataFrame, similarity_function, threshold:float=1, sfx_1="_acm", sfx_2="_dblp"):
