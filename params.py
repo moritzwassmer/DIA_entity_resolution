@@ -5,5 +5,6 @@ OUT_ACM_FILTERED = 'ACM_1995_2004.csv'
 OUT_MATCHED = 'matched.csv'
 OUT_MATCHED_BASELINE = 'matched_baseline.csv'
 OUT_MATCHED_SPARK = "matched_spark.csv"
+OUT_FINAL_DF = "final_df.csv"
 
 THRESHOLD = 0.9

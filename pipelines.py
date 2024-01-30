@@ -53,6 +53,9 @@ def er_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_functi
     unmatched_kept = extract_unmatched_2(bucket_matched, acm, dblp)
     final_df = resolve_df(bucket_matched, unmatched_kept, clusters, acm, dblp)
 
+    if return_final_df:
+        return final_df
+    
     if return_df:
         return bucket_matched_df, bucket_unmatched_df
     else:
