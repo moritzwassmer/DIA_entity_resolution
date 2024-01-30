@@ -37,7 +37,6 @@ def modify_columns(row):
         chars_to_change_venue = np.random.choice(len(row['Venue']), size=np.random.randint(1, 4), replace=False)
         row['Venue'] = ''.join([c if i not in chars_to_change_venue else np.random.choice(list(row['Venue'])) for i, c in enumerate(row['Venue'])])
     
-    # changing 1 to 3 randomly selected characters
     if len(row['Index']) > 3:
         chars_to_change_index = np.random.choice(len(row['Index']), size=np.random.randint(1, 4), replace=False)
         row['Index'] = ''.join([c if i not in chars_to_change_index else np.random.choice(list(row['Index'])) for i, c in enumerate(row['Index'])])
