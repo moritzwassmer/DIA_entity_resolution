@@ -2,15 +2,6 @@ from helpers import *
 import pandas as pd
 
 
-def construct_edge_list(bucket_matched):
-    # Step 1: Identify unique nodes
-    unique_strings = get_unique_strings(bucket_matched)
-
-    # Step 2: Create an edge list
-    edge_list = [(edge[0], edge[1]) for edge in bucket_matched]
-
-    return edge_list
-
 def get_connected_components(bucket_matched):
     """
     Args:
@@ -22,13 +13,8 @@ def get_connected_components(bucket_matched):
         {'539087cf20f70186a0d5d01c': '53e9b47cb7602d9703f80ae7', '53e9b47cb7602d9703f80ae7': '53e9b47cb7602d9703f80ae7', '539087cf20f70186a0d5d01a': '53e9b41ab7602d9703f11e2a',
     """
 
-    unique_strings = get_unique_strings(bucket_matched)
-
     # 1) generate edge list
-    edge_list = construct_edge_list(bucket_matched)
-
-    # Get the number of nodes
-    num_nodes = len(unique_strings)
+    edge_list = bucket_matched
 
     # 2) generate initial clusters (own strings)
     node_dict = {}
