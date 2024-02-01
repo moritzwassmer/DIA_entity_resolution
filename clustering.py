@@ -13,6 +13,8 @@ def get_connected_components(bucket_matched):
         {'539087cf20f70186a0d5d01c': '53e9b47cb7602d9703f80ae7', '53e9b47cb7602d9703f80ae7': '53e9b47cb7602d9703f80ae7', '539087cf20f70186a0d5d01a': '53e9b41ab7602d9703f11e2a',
     """
 
+    unique_strings = get_unique_strings(bucket_matched)
+
     # 1) generate edge list
     edge_list = bucket_matched
 
