@@ -6,7 +6,6 @@ from params import *
 from pyspark.sql.functions import  col
 from helpers import *
 
-from pyspark.sql import SparkSession
 import time
 
 def extract_unmatched(matched, unmatched): # TODO make more readable
@@ -93,7 +92,6 @@ def spark_pipeline(matching_similarity, acm, dblp, return_df = False, bucket_fun
     bucket_matched_index_df = bucket_matched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
     bucket_unmatched = bucket_unmatched_df.select([col("Index_acm"), col("Index_dblp")])#.dropDuplicates()
 
-    # convert to tuples  Causes Py4J Error when data size large -> no it doesnt, only the bucket_unmatched causes an error
     bucket_matched = df_to_tuples(bucket_matched_index_df, False) 
     #bucket_unmatched = df_to_tuples(bucket_unmatched, False) #, bucket_unmatched is too big for the replication experiments and would cause a crash
 

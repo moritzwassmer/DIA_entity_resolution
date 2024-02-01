@@ -90,7 +90,6 @@ def custom_author(authors:str): #not used
             tuplee = (parts[0][0], parts[len(parts)-1])
             text_set.update({tuplee}) # (first char, last word)
     
-    #print(text_set)
     text_list = list(text_set)#.sort()
     text_list.sort(key=lambda x: x[1]) # sort based on secound element
 

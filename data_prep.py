@@ -43,9 +43,8 @@ def parse_text(lines):
         if line.startswith('#*'):
             current_record['Title'] = line[2:].strip()
         elif line.startswith('#@'):
-            #current_record.setdefault('Authors', []).append(line[2:].strip())
             authors_string = line[2:].strip()
-            current_record['Authors'] = authors_string#.setdefault('Authors', []).extend(authors_string.split(', '))
+            current_record['Authors'] = authors_string
         elif line.startswith('#t'):
             current_record['Year'] = line[2:].strip()
         elif line.startswith('#c'):
@@ -60,10 +59,6 @@ def parse_text(lines):
     
     # dataframe
     df = pd.DataFrame(records, columns=['Title', 'Authors', 'Year', 'Venue', 'Index'])
-    
-    # explode authors column
-    #df['Authors'] = df['Authors'].apply(lambda x: [] if pd.isna(x) else x)  # Replace NaN with empty list
-    #df = df.explode('Authors').reset_index(drop=True)
 
     #  type casting
     df = cast_df(df)
