@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 from itertools import  product
 
-from params import *
+from .params import *
 
 from pyspark.sql.functions import expr, col
 

@@ -1,10 +1,10 @@
 # TODO add final_df in return
-from blocking import *
-from matching import *
-from clustering import *
-from params import *
+from .blocking import *
+from .matching import *
+from .clustering import *
+from .params import *
 from pyspark.sql.functions import  col
-from helpers import *
+from .helpers import *
 
 import time
 
