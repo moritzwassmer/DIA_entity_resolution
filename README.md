@@ -8,6 +8,12 @@ The ACM and DBLP dataset both consist of publications. Some of these publication
 
 To test the scalability of the approach, the datasets were replicated up to 10 times.
 
+### Example data
+![image](https://github.com/user-attachments/assets/893031c8-8f8d-4b3a-be85-38748d13ff88)
+![image](https://github.com/user-attachments/assets/b9be0bbd-3f62-4332-b202-96b3b8b78da8)
+
+
+
 ### Computational complexity
 For the matching procedure without blocking, the computational complexity of the matching procedure is $O(R^2 \cdot N \cdot M)$
 , with R being the replication factor (up to 10), N being the number of rows of the ACM dataset, and M being the number of rows of the DBLP dataset. 
