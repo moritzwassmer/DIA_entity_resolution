@@ -49,6 +49,11 @@ Venue have to both contain substring sigmod or vldb
 #### 3) Clustering 
 Group entities that are similar and keep 1 entry
 
+## Evaluation
+Here are the results of the execution time of the replication experiment. For details view the .docx
+
+![image](https://github.com/user-attachments/assets/8bb5008a-e090-4331-a931-6343ebb6997c)
+
 ## Installation
 
 1) Please refer to the `requirements.txt` file for the necessary dependencies.
