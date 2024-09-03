@@ -1,0 +1,13 @@
+IN_FOLDER = 'in/'
+DLBP_PATH = IN_FOLDER+'dblp.txt'
+ACM_PATH = IN_FOLDER+'citation-acm-v8.txt'
+
+OUT_FOLDER = 'out/'
+OUT_DBLP_FILTERED = OUT_FOLDER+'DBLP_1995_2004.csv'
+OUT_ACM_FILTERED = OUT_FOLDER+'ACM_1995_2004.csv'
+OUT_MATCHED = OUT_FOLDER+'matched.csv'
+OUT_MATCHED_BASELINE = OUT_FOLDER+'matched_baseline.csv'
+OUT_MATCHED_SPARK = OUT_FOLDER+"matched_spark.csv"
+OUT_FINAL_DF = OUT_FOLDER+"final_df.csv"
+
+THRESHOLD = 0.9
