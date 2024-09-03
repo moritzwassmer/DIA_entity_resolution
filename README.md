@@ -9,14 +9,15 @@ The ACM and DBLP dataset both consist of publications. Some of these publication
 To test the scalability of the approach, the datasets were replicated up to 10 times.
 
 ### Computational complexity
-For the matching procedure without blocking, the computational complexity of the matching procedure is ![formula](https://render.githubusercontent.com/render/math?math=R^2%20%5Ctimes%20N%20%5Ctimes%20M), with R being the replication factor (up to 10), N being the number of rows of the ACM dataset, and M being the number of rows of the DBLP dataset. 
+For the matching procedure without blocking, the computational complexity of the matching procedure is $O(R^2 \cdot N \cdot M)$
+, with R being the replication factor (up to 10), N being the number of rows of the ACM dataset, and M being the number of rows of the DBLP dataset. 
 
 ### Approach
 The approach selected involves 3 stages. For Blocking and Matching, multiple techniques were compared.
 
 #### 1) Blocking
-Reduce the computational complexity by limiting the amount of matches performed without losing performance 
--	Baseline (Naïve Brutue Force):
+Reduce the computational complexity by limiting the amount of matches performed by only comparing rows with the same 'bucket'.
+-	Baseline (Naïve Brutue Force, no buckets):
 -	Blocking by year:
 Buckets are constructed by the original Year columns. 
 -	Blocking by year and venue:
@@ -26,7 +27,7 @@ Buckets are constructed by creating a sorted list without duplicates of characte
 For example: “moritz wassmer, frederick klaus meier” -> [f, m, w]
 
 #### 2) Matching
-Match rows of both datasets and calculate a similarity to determine if they refer to the same entity
+Match rows of both datasets and calculate a similarity to determine if they refer to the same entity. Similarity measures used are the following:
 -	Exact Match
 This similarity is simply checking if all attributes are the same in both rows.
 -	Simple Similarity
