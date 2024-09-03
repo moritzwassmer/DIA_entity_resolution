@@ -9,12 +9,12 @@ The ACM and DBLP dataset both consist of publications. Some of these publication
 To test the scalability of the approach, the datasets were replicated up to 10 times.
 
 ### Computational complexity
-For the matching procedure without blocking, the computational complexity of the matching procedure is R^2*N*M. With R being the replication factor (up to 10), N= and M= being the number of rows of the ACM and DBLP datasets respectively. 
+For the matching procedure without blocking, the computational complexity of the matching procedure is ![formula](https://render.githubusercontent.com/render/math?math=R^2%20%5Ctimes%20N%20%5Ctimes%20M), with R being the replication factor (up to 10), N being the number of rows of the ACM dataset, and M being the number of rows of the DBLP dataset. 
 
 ### Approach
 The approach selected involves 3 stages. For Blocking and Matching, multiple techniques were compared.
 
-#### - Blocking
+#### 1) Blocking
 Reduce the computational complexity by limiting the amount of matches performed without losing performance 
 -	Baseline (Naïve Brutue Force):
 -	Blocking by year:
@@ -25,7 +25,7 @@ Buckets are constructed by the original Year columns with appended substring ‘
 Buckets are constructed by creating a sorted list without duplicates of characters according to the following scheme: First character of First name, First character of Last name. 
 For example: “moritz wassmer, frederick klaus meier” -> [f, m, w]
 
-#### - Matching
+#### 2) Matching
 Match rows of both datasets and calculate a similarity to determine if they refer to the same entity
 -	Exact Match
 This similarity is simply checking if all attributes are the same in both rows.
@@ -39,7 +39,7 @@ Authors levenstein distance has to be above 0.9
 Title levenstein distance has to be above 0.9
 Venue have to both contain substring sigmod or vldb
 
-#### - Clustering 
+#### 3) Clustering 
 Group entities that are similar and keep 1 entry
 
 ## Installation
