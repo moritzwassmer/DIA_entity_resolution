@@ -3,20 +3,6 @@
 
 An entity resolution and deduplication pipeline for the ACM and DBLP publications datasets using PySpark and advanced blocking/matching techniques.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Problem Description](#problem-description)
-- [Methodology](#methodology)
-- [Results](#results)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Overview
 
 This project implements a scalable Entity Resolution (ER) pipeline designed to deduplicate and integrate publication records from the ACM and DBLP datasets. Developed as part of the 2023/2024 course "Data Integration and Large-scale Analysis", the pipeline addresses the challenge of identifying duplicate publications across heterogeneous data sources where exact matches are not guaranteed.
@@ -168,16 +154,11 @@ Groups matched entities and retains one representative record per cluster, produ
 
 ## Results
 
-The following graph shows execution time results from the replication experiment across different blocking strategies and replication factors:
+The following graph shows execution time replication experiment for bucketing strategy by authors and fancy similarity:
 
 ![Evaluation Results](https://github.com/user-attachments/assets/8bb5008a-e090-4331-a931-6343ebb6997c)
 
 Detailed results and analysis can be found in the accompanying documentation.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 ## License
-
 This project was developed as part of the "Data Integration and Large-scale Analysis" course (2023/2024).
