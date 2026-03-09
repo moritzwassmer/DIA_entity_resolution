@@ -1,0 +1,22 @@
+name: data-env
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - numpy=1.26
+  - pandas=2.1
+  - matplotlib=3.8
+  - seaborn=0.13
+  - pyarrow=11
+  - pillow=10.1
+  - tqdm
+  - pip
+
+  - pip:
+      - pyspark
+      - graphframes==0.6
+      - rapidfuzz==3.5.2
+      - python-Levenshtein==0.23.0
+      - pygame==2.1.2
