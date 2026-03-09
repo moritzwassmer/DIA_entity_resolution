@@ -1,68 +1,183 @@
 """
-# Entity Resolution Pipeline 
+# Entity Resolution Pipeline
 
-This project aims to create an Entity Resolution (ER) pipeline for the deduplication of the ACM and DBLP publications datasets. The project was developed as part of the 2023/2024 course "Data Integration and Large-scale Analysis". 
+An entity resolution and deduplication pipeline for the ACM and DBLP publications datasets using PySpark and advanced blocking/matching techniques.
 
-## Problem Description
-The ACM and DBLP dataset both consist of publications. Some of these publications are only published on one of the datasets, while others are contained in both. For those contained in both, it is not guaranteed that both values match exactly. Therefore a heuristical approach has to be found to decide which of the entries in each dataset refer to the same publication. In the end, we want to keep 1 entry for each publication to create an integrated dataset.
+## Table of Contents
 
-To test the scalability of the approach, the datasets were replicated up to 10 times.
+- [Overview](#overview)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Problem Description](#problem-description)
+- [Methodology](#methodology)
+- [Results](#results)
+- [Contributing](#contributing)
+- [License](#license)
 
-### Example data
-![image](https://github.com/user-attachments/assets/893031c8-8f8d-4b3a-be85-38748d13ff88)
-![image](https://github.com/user-attachments/assets/b9be0bbd-3f62-4332-b202-96b3b8b78da8)
+## Overview
 
+This project implements a scalable Entity Resolution (ER) pipeline designed to deduplicate and integrate publication records from the ACM and DBLP datasets. Developed as part of the 2023/2024 course "Data Integration and Large-scale Analysis", the pipeline addresses the challenge of identifying duplicate publications across heterogeneous data sources where exact matches are not guaranteed.
 
+## Features
 
-### Computational complexity
-For the matching procedure without blocking, the computational complexity of the matching procedure is $O(R^2 \cdot N \cdot M)$
-, with R being the replication factor (up to 10), N being the number of rows of the ACM dataset, and M being the number of rows of the DBLP dataset. 
+- **Multiple Blocking Strategies**: Baseline brute force, year-based, venue-based, and author-based blocking
+- **Flexible Similarity Measures**: Exact match, simple similarity (Levenshtein distance), and fancy similarity (threshold-based)
+- **Scalable Architecture**: PySpark implementation handles datasets replicated up to 10x
+- **Modular Design**: Organized into reusable modules for blocking, matching, clustering, and evaluation
+- **Performance Evaluation**: Built-in evaluation metrics and execution time analysis
 
-### Approach
-The approach selected involves 3 stages. For Blocking and Matching, multiple techniques were compared.
+## Prerequisites
 
-#### 1) Blocking
-Reduce the computational complexity by limiting the amount of matches performed by only comparing rows with the same 'bucket'.
--	Baseline (Naïve Brutue Force, no buckets):
--	Blocking by year:
-Buckets are constructed by the original Year columns. 
--	Blocking by year and venue:
-Buckets are constructed by the original Year columns with appended substring ‘sigmod’ when there is “sigmod” present or “dldp” when dblp is present. 
--	Blocking by authors:
-Buckets are constructed by creating a sorted list without duplicates of characters according to the following scheme: First character of First name, First character of Last name. 
-For example: “moritz wassmer, frederick klaus meier” -> [f, m, w]
+- Python 3.8+
+- Apache Spark 3.x (correctly installed and configured)
+- Conda or Miniconda (for environment management)
 
-#### 2) Matching
-Match rows of both datasets and calculate a similarity to determine if they refer to the same entity. Similarity measures used are the following:
--	Exact Match
-This similarity is simply checking if all attributes are the same in both rows.
--	Simple Similarity
-This similarity measure calculates the distance between each attribute from each dataset and takes an average which is thresholded to determine a match:
-It uses levenstein distance for string attributes, and checks wether years in both rows are the same (which is represented by similarity 1, else 0).
--	Fancy Similarity
-This similarity measure is not thresholded and was constructed in the following way:
-Year has to be the same
-Authors levenstein distance has to be above 0.9
-Title levenstein distance has to be above 0.9
-Venue have to both contain substring sigmod or vldb
-
-#### 3) Clustering 
-Group entities that are similar and keep 1 entry
-
-## Evaluation
-Here are the results of the execution time of the replication experiment. For details view the .docx
-
-![image](https://github.com/user-attachments/assets/8bb5008a-e090-4331-a931-6343ebb6997c)
+**Important**: PySpark requires a proper Apache Spark installation. Refer to the [official Spark documentation](https://spark.apache.org/docs/latest/) for installation instructions specific to your operating system.
 
 ## Installation
 
-1) Please refer to the `requirements.txt` file for the necessary dependencies.
-2) download the datasets https://lfs.aminer.cn/lab-datasets/citation/dblp.v8.tgz and https://lfs.aminer.cn/lab-datasets/citation/citation-acm-v8.txt.tgz and put them into folder `in`
-3) for the pyspark implementation of `2_3_entity_resolution.ipynb` an installation of spark is required
-https://www.datacamp.com/tutorial/installation-of-pyspark
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd DIA_entity_resolution
+   ```
+
+2. **Install Apache Spark**
+   
+   Follow the official installation guide for your platform:
+   - [Apache Spark Documentation](https://spark.apache.org/docs/latest/)
+   - [PySpark Installation Tutorial](https://www.datacamp.com/tutorial/installation-of-pyspark)
+   
+   Ensure that `SPARK_HOME` and `JAVA_HOME` environment variables are properly configured.
+
+3. **Create the conda environment**
+   ```bash
+   conda env create -f environment.yaml
+   conda activate entity-resolution
+   ```
+
+4. **Download the datasets**
+   
+   Download the following datasets and place them in the `in/` folder:
+   - [DBLP dataset](https://lfs.aminer.cn/lab-datasets/citation/dblp.v8.tgz)
+   - [ACM dataset](https://lfs.aminer.cn/lab-datasets/citation/citation-acm-v8.txt.tgz)
+   
+   Extract the archives so that the data files are directly accessible in the `in/` directory.
 
 ## Usage
 
-To use this project, follow these steps:
-1. Open and run the `1_data_acquisition_preparation.ipynb` notebook.
-2. Open and run the `2_3_entity_resolution.ipynb` notebook.
+Run the notebooks in sequence:
+
+1. **Data Acquisition and Preparation**
+   ```bash
+   jupyter notebook 1_data_acquisition_preparation.ipynb
+   ```
+   This notebook handles data loading, cleaning, and preprocessing.
+
+2. **Entity Resolution**
+   ```bash
+   jupyter notebook 2_3_entity_resolution.ipynb
+   ```
+   This notebook executes the blocking, matching, and clustering pipeline.
+
+Alternatively, explore individual implementations:
+- `ER.ipynb` - Alternative entity resolution approaches
+- `pyspark_test.ipynb` - PySpark configuration testing
+
+## Project Structure
+
+```
+DIA_entity_resolution/
+├── modules/                    # Core pipeline modules
+│   ├── __init__.py
+│   ├── blocking.py            # Blocking strategies
+│   ├── clustering.py          # Entity clustering algorithms
+│   ├── data_prep.py           # Data preparation utilities
+│   ├── evaluation.py          # Evaluation metrics
+│   ├── helpers.py             # Helper functions
+│   ├── matching.py            # Similarity measures
+│   ├── params.py              # Configuration parameters
+│   └── pipelines.py           # End-to-end pipelines
+├── in/                        # Input datasets (not included)
+├── 1_data_acquisition_preparation.ipynb
+├── 2_3_entity_resolution.ipynb
+├── ER.ipynb
+├── pyspark_test.ipynb
+├── environment.yaml           # Conda environment specification
+└── README.md                  # This file
+``` 
+
+## Problem Description
+
+The ACM and DBLP datasets both contain scholarly publication records. While some publications exist exclusively in one dataset, many appear in both. However, duplicate entries across datasets often have inconsistencies in attribute values (titles, authors, venues, etc.), making exact matching infeasible. This project develops a heuristic approach to identify which entries refer to the same publication, ultimately producing an integrated dataset with one entry per unique publication.
+
+To test scalability, datasets were replicated up to 10 times.
+
+### Example Data
+
+![ACM Example](https://github.com/user-attachments/assets/893031c8-8f8d-4b3a-be85-38748d13ff88)
+![DBLP Example](https://github.com/user-attachments/assets/b9be0bbd-3f62-4332-b202-96b3b8b78da8)
+
+### Computational Complexity
+
+Without blocking, the computational complexity of the matching procedure is:
+
+$$O(R^2 \cdot N \cdot M)$$
+
+where:
+- $R$ = replication factor (up to 10)
+- $N$ = number of ACM records
+- $M$ = number of DBLP records
+
+## Methodology
+
+The entity resolution pipeline consists of three main stages:
+
+### 1. Blocking
+
+Reduces computational complexity by partitioning records into buckets and only comparing records within the same bucket.
+
+**Strategies implemented:**
+- **Baseline (Naïve Brute Force)**: No blocking, all pairs compared
+- **Blocking by Year**: Buckets based on publication year
+- **Blocking by Year and Venue**: Year buckets with venue substring indicators ("sigmod" or "vldb")
+- **Blocking by Authors**: Buckets created from sorted unique first characters of author names
+  - Example: "moritz wassmer, frederick klaus meier" → [f, m, w]
+
+### 2. Matching
+
+Calculates similarity between record pairs to determine if they represent the same entity.
+
+**Similarity measures:**
+- **Exact Match**: All attributes must be identical
+- **Simple Similarity**: Averaged Levenshtein distance across attributes with threshold
+  - String attributes: Levenshtein distance
+  - Year: Binary match (1 if same, 0 otherwise)
+- **Fancy Similarity**: Multi-criteria matching without threshold
+  - Year must match exactly
+  - Authors Levenshtein distance ≥ 0.9
+  - Title Levenshtein distance ≥ 0.9
+  - Venue must contain substring "sigmod" or "vldb" in both
+
+### 3. Clustering
+
+Groups matched entities and retains one representative record per cluster, producing the final deduplicated dataset.
+
+## Results
+
+The following graph shows execution time results from the replication experiment across different blocking strategies and replication factors:
+
+![Evaluation Results](https://github.com/user-attachments/assets/8bb5008a-e090-4331-a931-6343ebb6997c)
+
+Detailed results and analysis can be found in the accompanying documentation.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project was developed as part of the "Data Integration and Large-scale Analysis" course (2023/2024).
